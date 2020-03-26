@@ -61,11 +61,11 @@ int main(int argc, char *argv[]) {
           data.data(), StringUtils::string_to_char_p("fire-and-forget")))
       ->subscribe([]() { std::cout << "fire-and-forget" << std::endl; });
 
-  //  client->getRequester()->requestStream(rsocket::Payload(data.data(),
-  //  StringUtils::string_to_char_p("stream")))
-  //  ->subscribe([](rsocket::Payload p){
-  //    std::cout<<" res : "<<p.moveDataToString()<<std::endl;
-  //  });
+    client->getRequester()->requestStream(rsocket::Payload(data.data(),
+    StringUtils::string_to_char_p("stream")))
+    ->subscribe([](rsocket::Payload p){
+      std::cout<<" requestStream Received : "<<p.moveDataToString()<<std::endl;
+    });
 
   client->getRequester()
       ->requestChannel(
