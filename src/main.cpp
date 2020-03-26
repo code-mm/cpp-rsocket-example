@@ -8,6 +8,7 @@
 #include "rsocket/examples/util/ExampleSubscriber.h"
 #include "rsocket/transports/tcp/TcpConnectionFactory.h"
 
+#include "yarpl/Flowable.h"
 #include "yarpl/Single.h"
 
 #include "StringUtils.h"
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]) {
                         *worker.getEventBase(), std::move(address)),
                     rsocket::SetupParameters("message/x.rsocket.routing.v0",
                                              "application/json"),
-                    nullptr, std::chrono::seconds(10), nullptr,
+                    nullptr, std::chrono::seconds(60 * 60), nullptr,
 
                     std::make_shared<ConnectionEvents>()
 
@@ -46,7 +47,39 @@ int main(int argc, char *argv[]) {
   client->getRequester()
       ->requestResponse(rsocket::Payload(data.data(), metadata))
       ->subscribe([](rsocket::Payload p) {
-        std::cout << "接收的数据 >> " << p.moveDataToString() << std::endl;
+        std::cout << "requestResponse Received :  >> " << p.moveDataToString()
+                  << std::endl;
+      });
+
+  client->getRequester()
+      ->fireAndForget(rsocket::Payload(
+          data.data(), StringUtils::string_to_char_p("fire-and-forget")))
+      ->subscribe([]() { std::cout << "fire-and-forget" << std::endl; });
+
+  client->getRequester()
+      ->fireAndForget(rsocket::Payload(
+          data.data(), StringUtils::string_to_char_p("fire-and-forget")))
+      ->subscribe([]() { std::cout << "fire-and-forget" << std::endl; });
+
+  //  client->getRequester()->requestStream(rsocket::Payload(data.data(),
+  //  StringUtils::string_to_char_p("stream")))
+  //  ->subscribe([](rsocket::Payload p){
+  //    std::cout<<" res : "<<p.moveDataToString()<<std::endl;
+  //  });
+
+  client->getRequester()
+      ->requestChannel(
+          rsocket::Payload(data.data(),
+                           StringUtils::string_to_char_p("channel")),
+          yarpl::flowable::Flowable<>::justN({data.data(), data.data(),
+                                              data.data(), data.data(),
+                                              data.data(), data.data()})
+              ->map([](char *v) {
+                return rsocket::Payload(
+                    v, StringUtils::string_to_char_p("channel"));
+              }))
+      ->subscribe([](rsocket::Payload p) {
+        std::cout << "channel Received : " << p.moveDataToString() << std::endl;
       });
 
   std::getchar();
