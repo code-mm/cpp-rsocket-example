@@ -17,9 +17,12 @@ find_package(yarpl REQUIRED)
 find_package(rsocket REQUIRED)
 
 add_executable(
-        rsocket_example src/main.cpp
-        src/StringUtils.h
-        src/ConnectionEvents.h)
+        rsocket_example
+        src/main.cpp
+        src/MetaDataRouteUtils.cpp
+        src/MetaDataRouteUtils.h
+        src/AppRSocketClient.cpp
+        src/AppRSocketClient.h)
 target_link_libraries(${PROJECT_NAME} PRIVATE yarpl)
 target_link_libraries(${PROJECT_NAME} PRIVATE ReactiveSocket)
 target_link_libraries(${PROJECT_NAME} PRIVATE Folly::folly Folly::folly_deps Folly::follybenchmark)
