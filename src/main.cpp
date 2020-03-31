@@ -87,12 +87,19 @@ int main(int argc, char *argv[])
     AppRSocketClient *_app_rsocket_client = new AppRSocketClient("192.168.0.43", 7000);
 
     if (_app_rsocket_client->_open) {
-        std::string data = "{\"origin\":\"Client\",\"interaction\":\"Request\"}";
 
-        char *metadata = MetaDataRouteUtils::string_to_char_p("hello");
+        _app_rsocket_client->get_app_client_event_base()->getEventBase()->add([_app_rsocket_client]() {
+            std::string data = "{\"origin\":\"Client\",\"interaction\":\"Request\"}";
 
-        _app_rsocket_client->get_client()->getRequester()->requestResponse(rsocket::Payload(data.data(), metadata))->subscribe([](rsocket::Payload p) {
-            std::cout << "requestResponse Received :  >> " << p.moveDataToString() << std::endl;
+            char *metadata = MetaDataRouteUtils::string_to_char_p("hello");
+
+            _app_rsocket_client->get_client()
+                ->getRequester()
+                ->requestResponse(rsocket::Payload(data.data(), metadata))
+                ->subscribe([_app_rsocket_client](rsocket::Payload p) {
+                    std::cout << "requestResponse Received :  >> " << p.moveDataToString() << std::endl;
+                    _app_rsocket_client->disconnect();
+                });
         });
     }
 

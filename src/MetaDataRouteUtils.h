@@ -9,7 +9,6 @@
 
 namespace bdlbsc
 {
-
     // 路由metadata char* 工具类
     class MetaDataRouteUtils
     {

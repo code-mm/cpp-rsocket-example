@@ -19,7 +19,6 @@
 
 namespace bdlbsc
 {
-
     class AppRSocketClient
     {
 
@@ -31,9 +30,12 @@ namespace bdlbsc
         void connect();
         // 从新连接
         void re_connect();
+        // 断开连接
+        void disconnect();
 
         const std::unique_ptr<rsocket::RSocketClient> &get_client() const;
 
+        // 是否连接上
         bool _open = false;
 
     private:
@@ -43,10 +45,11 @@ namespace bdlbsc
         folly::SocketAddress _address;
         // 线程
         folly::ScopedEventBaseThread _worker;
+        // 状态
         std::shared_ptr<rsocket::RSocketStats> _stats = rsocket::RSocketStats::noop();
-
         // 连接管理器
         folly::EventBase *_connect_event_base;
+        //
         folly::EventBase *_app_client_event_base;
 
     public:
