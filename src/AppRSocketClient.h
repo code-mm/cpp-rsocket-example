@@ -32,11 +32,14 @@ namespace bdlbsc
         void re_connect();
         // 断开连接
         void disconnect();
-
+        
         const std::unique_ptr<rsocket::RSocketClient> &get_client() const;
 
         // 是否连接上
         bool _open = false;
+
+        // 开始连接
+        bool _start = false;
 
     private:
         // 连接客户端
@@ -55,6 +58,7 @@ namespace bdlbsc
     public:
         folly::EventBase *get_connect_event_base() const;
         folly::EventBase *get_app_client_event_base() const;
+
     private:
         std::string _host;
         int _port;

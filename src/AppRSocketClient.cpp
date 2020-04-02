@@ -30,9 +30,24 @@ namespace bdlbsc
                       .get();
     }
 
+    // 从新连接
     void AppRSocketClient::re_connect()
     {
-        folly::makeFuture().via(_app_client_event_base->getEventBase()).delayed(std::chrono::seconds(10)).thenValue([this](auto &&) {});
+        folly::makeFuture().via(_app_client_event_base->getEventBase()).delayed(std::chrono::seconds(10)).thenValue([this](auto &&) {
+            if (_start) {
+                return;
+            }
+
+            if (!_app_client_event_base->isInEventBaseThread()) {
+                return;
+            }
+
+            if (_open) {
+                return;
+            }
+
+            connect();
+        });
     }
 
     void AppRSocketClient::disconnect()
