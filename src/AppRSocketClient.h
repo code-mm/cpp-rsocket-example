@@ -60,7 +60,9 @@ namespace bdlbsc
         folly::EventBase *get_app_client_event_base() const;
 
     private:
+        // 主机
         std::string _host;
+        // 端口
         int _port;
 
     public:

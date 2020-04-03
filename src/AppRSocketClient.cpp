@@ -10,9 +10,13 @@ namespace bdlbsc
     {
         this->_host = host;
         this->_port = port;
-        _address.setFromHostPort(_host, port);
+        // 设置连接地址
+        _address.setFromHostPort(_host, _port);
+        //
         _connect_event_base = _worker.getEventBase();
+        //
         _app_client_event_base = _worker.getEventBase();
+        // 连接
         connect();
     }
 
@@ -46,6 +50,7 @@ namespace bdlbsc
                 return;
             }
 
+            _start = true;
             connect();
         });
     }
